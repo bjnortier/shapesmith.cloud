@@ -120,14 +120,18 @@ validate_password(User, Password) ->
 	    user_doesnt_exist;
 	UserJSON ->
 	    {Props} = jiffy:decode(UserJSON),
-	    {_, BCryptHashBin} = lists:keyfind(<<"password[bcrypt]">>, 1, Props),
-	    BCryptHash = binary_to_list(BCryptHashBin),
-	    case api_bcrypt:hashpw(Password, BCryptHash) of
-		{ok, BCryptHash} ->
-		    ok;
-		_ ->
-		    invalid_password
-	    end
+            case lists:keyfind(<<"password[bcrypt]">>, 1, Props) of
+                {_, BCryptHashBin} ->
+                    BCryptHash = binary_to_list(BCryptHashBin),
+                    case api_bcrypt:hashpw(Password, BCryptHash) of
+                        {ok, BCryptHash} ->
+                            ok;
+                        _ ->
+                            invalid_password
+                    end;
+                false ->
+                    invalid_password
+            end
     end.
 
 get_designs(User) ->
