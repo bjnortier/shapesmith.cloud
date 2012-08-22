@@ -27,24 +27,3 @@ $('#signup-button').click(function() {
     return false;
 });
 
-
-
-$('#temp-account-button').click(function() {
-    $('#spinner-container').append('<div id="spinner"><img src="/static/images/progress-spinner.gif" alt="in progress"/></div>');
-    $.ajax({
-        type: 'POST',
-        url: '/temp_user/',
-        data: JSON.stringify({}),
-        dataType: 'json',
-        contentType: 'application/json',
-        success: function(response) {
-            var username = response.username;
-            window.location.href = '/' + username + '/designs';
-        },
-        error: function(response) {
-            SS.render_errors(JSON.parse(response.responseText));
-            $('#spinner').remove();
-        }
-    });
-    return false;
-});
