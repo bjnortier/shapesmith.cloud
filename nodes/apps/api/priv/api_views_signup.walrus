@@ -64,22 +64,6 @@
       </div>
      </div>
 
-     <div class="row or-row">
-      <div class="fourcol"></div>
-       <div class="fourcol"><div class="or">OR</div>You can try it out without signup up using a temporary account. <span class="warning">Note: You will not be able to sign into this account again and any models you create will not be accessible!</span>
-       </div>
-      <div class="fourcol"></div>
-    </div>
-
-     <div class="row">
-       <div class="fourcol"></div>
-       <div class="fourcol">
-         <div id="temp-account-button" class="button">Use a temporary account</div>
-       </div>
-       <div class="fourcol last">
-      </div>
-     </div>
-
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
