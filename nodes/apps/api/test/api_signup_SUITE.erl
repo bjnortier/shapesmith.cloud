@@ -28,7 +28,8 @@ all() ->
          validate_username,
 	 validate_email,
 	 validate_password,
-	 signup_signin_signout
+	 signup_signin_signout,
+         temp_account
 	].
 
 init_per_suite(Config) ->
@@ -183,6 +184,20 @@ signup_signin_signout(_Config) ->
 
     ok.
 
+temp_account(_Config) ->
+    %% Create a temporary account
+    httpc:set_options([{cookies, enabled}]),
+    PostBody = jiffy:encode({[]}),
+
+    {ok,{{"HTTP/1.1",200,_}, ResponseHeaders, PostResponse}} = 
+	httpc:request(post, {"http://localhost.shapesmith.net:8001/temp_user", [], "application/json", PostBody}, [{autoredirect, false}], []),
+    check_json_content_type(ResponseHeaders),
+    {[{<<"username">>, Username}]} = jiffy:decode(iolist_to_binary(PostResponse)),
+
+    {_, SetCookie} = lists:keyfind("set-cookie", 1, ResponseHeaders),
+    [SessionCookie, "Domain=.shapesmith.net"," Path=/"] = string:tokens(SetCookie, ";"),
+    
+    ok.
 
 
 check_json_content_type(Headers) ->

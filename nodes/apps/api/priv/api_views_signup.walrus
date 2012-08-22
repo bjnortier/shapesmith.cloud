@@ -20,7 +20,7 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 <span class="logo"><a href="/"><img src="/static/images/logo_small.png"/></a></span>
+         <span class="logo"><a href="/"><img src="/static/images/logo_small.png"/></a></span>
        </div>
       <div class="fourcol last"></div>
      </div>
@@ -30,8 +30,8 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 Create an account in one easy step. Already have an account?
-	 <a href="/signin">Sign in here</a>.
+         Create an account in one easy step. Already have an account?
+         <a href="/signin">Sign in here</a>.
        </div>
        <div class="fourcol last"></div>
      </div>
@@ -43,13 +43,13 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 <div class="field">
-	   <div class="field-inner">
-	     <input placeholder="{{placeholder}}" class="field" id="{{name}}" type="{{type}}"/>
-	     <div class="errors" id="{{name}}-errors">
-	     </div>
-	   </div>
-	 </div>
+         <div class="field">
+           <div class="field-inner">
+             <input placeholder="{{placeholder}}" class="field" id="{{name}}" type="{{type}}"/>
+             <div class="errors" id="{{name}}-errors">
+             </div>
+           </div>
+         </div>
        </div>
        <div class="fourcol last"></div>
      </div>
@@ -58,7 +58,23 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 <div id="signup-button" class="button">create my account</div>
+         <div id="signup-button" class="button">Create my account</div>
+       </div>
+       <div class="fourcol last">
+      </div>
+     </div>
+
+     <div class="row or-row">
+      <div class="fourcol"></div>
+       <div class="fourcol"><div class="or">OR</div>You can try it out without signup up using a temporary account. <span class="warning">Note: You will not be able to sign into this account again and any models you create will not be accessible!</span>
+       </div>
+      <div class="fourcol"></div>
+    </div>
+
+     <div class="row">
+       <div class="fourcol"></div>
+       <div class="fourcol">
+         <div id="temp-account-button" class="button">Use a temporary account</div>
        </div>
        <div class="fourcol last">
       </div>
@@ -67,7 +83,7 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 <div id="spinner-container"></div>
+         <div id="spinner-container"></div>
        </div>
        <div class="fourcol last">
       </div>

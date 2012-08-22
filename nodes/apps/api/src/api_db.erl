@@ -19,7 +19,7 @@
 -author('Benjamin Nortier <bjnortier@gmail.com>').
 -export([exists/4, create/4, get/4]).
 -export([exists_root/2, put_root/3, get_root/2, delete_root/2]).
--export([create_user/3, validate_password/2]).
+-export([create_user/3, create_temp_user/0, validate_password/2]).
 -export([get_designs/1, add_design/2, remove_design/2]).
 -export([get_brep/1, exists_brep/1, put_brep/2]).
 -export([publish_stl/3, is_published_stl/3]).
@@ -90,6 +90,27 @@ create_user(User, Password, EmailAddress) ->
     	    ok;
     	true ->
     	    already_exists
+    end.
+
+create_temp_user() ->
+    create_temp_user(20).
+
+create_temp_user(0) ->
+    throw('could_not_create_temp_user');
+create_temp_user(N) ->
+    RandomSuffix = string:join(
+                     lists:map(fun erlang:integer_to_list/1,
+                               lists:map(fun(_) -> random:uniform(9) end, 
+                                         lists:seq(1,5))), 
+                     ""),
+    User = "____temp" ++ RandomSuffix,
+    {ok, DB} = application:get_env(api, db_module),
+    case DB:exists(bucket(User), <<"_user">>) of
+        false ->
+            DB:put(bucket(User), <<"_user">>, jiffy:encode({[{<<"temp_user">>, true}]})),
+            User;
+        true ->
+            create_temp_user(N-1)
     end.
 
 validate_password(User, Password) ->

@@ -210,6 +210,20 @@ input.field {
 .empty, .empty:hover {
     color: #333333;
 }
+
+.or-row {
+    padding-top: 20px;
+    padding-bottom: 10px
+}
+
+.or {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.warning {
+    color: orange;
+}
 	
 #spinner {
     padding: 5px;
