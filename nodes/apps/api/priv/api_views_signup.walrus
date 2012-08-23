@@ -54,6 +54,13 @@
        <div class="fourcol last"></div>
      </div>
     {{/fields}}
+
+    <div class="row or-row">
+      <div class="fourcol"></div>
+       <div class="fourcol">This is a beta! <span class="warning">There are no guarantees.</span> Your email address and the designs you create will not be shared with anyone.
+       </div>
+      <div class="fourcol"></div>
+    </div>
    
      <div class="row">
        <div class="fourcol"></div>
