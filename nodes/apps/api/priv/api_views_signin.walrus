@@ -75,7 +75,7 @@
 
     <div class="row or-row">
       <div class="fourcol"></div>
-       <div class="fourcol"><div class="or">OR</div>Sign in with a temporary account. <span class="warning">Note: You will not be able to sign into this account again and any models you create will not be accessible!</span>
+       <div class="fourcol"><div class="or">OR</div>Try Shapesmith with a temporary account. <span class="warning">Note: You will not be able to sign into this account again and any models you create will not be accessible!</span>
        </div>
       <div class="fourcol"></div>
     </div>
@@ -83,7 +83,7 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-         <div id="temp-account-button" class="button">Use a temporary account</div>
+         <div id="temp-account-button" class="button">Try it</div>
        </div>
        <div class="fourcol last">
       </div>
