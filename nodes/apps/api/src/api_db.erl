@@ -93,6 +93,8 @@ create_user(User, Password, EmailAddress) ->
     end.
 
 create_temp_user() ->
+    {A1,A2,A3} = now(),
+    random:seed(A1, A2, A3),
     create_temp_user(20).
 
 create_temp_user(0) ->
