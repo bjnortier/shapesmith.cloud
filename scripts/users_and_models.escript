@@ -43,7 +43,7 @@ main(_) ->
     io:format("number of temp users: ~p~n", [length(TempUsers)]),
     io:format("number of models: ~p~n", [NumModels]),
     {{Y,M,D},{HH,MM,SS}} = calendar:universal_time(),
-    URL = lists:flatten(io_lib:format("http://localhost:8098/buckets/_dailystats/keys/~p_~p_~p_~p_~p_~p", [Y,M,D,HH,MM,SS])),
+    URL = lists:flatten(io_lib:format("http://localhost:8098/buckets/_dailystats/keys/~p_~p_~p", [Y,M,D])),
     Contents = jiffy:encode({[{<<"users">>, NumUsers}, {<<"temp_users">>, length(TempUsers)}, {<<"models">>, NumModels}]}),
     io:format("storing ~p ~p", [URL, Contents]),
     {ok, {{_, 204, _}, _, _}} = httpc:request(put, {URL, [], "application/json", Contents}, [], []).
