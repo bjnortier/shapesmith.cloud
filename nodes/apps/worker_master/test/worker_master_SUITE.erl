@@ -39,8 +39,8 @@ end_per_suite(_Config) ->
     ok.
 
 init_per_testcase(_, Config) ->
-    ok = application:start(warroom),
     ok = application:start(folsom),
+    ok = application:start(warroom),
     ok = application:start(worker_master),
     Config.
 
