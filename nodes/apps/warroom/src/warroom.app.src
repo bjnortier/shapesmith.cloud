@@ -1,0 +1,12 @@
+{application, warroom,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { warroom_app, []}},
+  {env, []}
+ ]}.
