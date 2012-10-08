@@ -31,16 +31,22 @@ all() ->
 	].
 
 init_per_suite(Config) ->
+    ok = application:start(cowboy),
     Config.
 
 end_per_suite(_Config) ->
+    ok = application:stop(cowboy),
     ok.
 
 init_per_testcase(_, Config) ->
+    ok = application:start(folsom),
+    ok = application:start(warroom),
     ok = application:start(worker_master),
     Config.
 
 end_per_testcase(_, _Config) ->
+    ok = application:stop(warroom),
+    ok = application:stop(folsom),
     ok = application:stop(worker_master).
 
 %% ===================================================================

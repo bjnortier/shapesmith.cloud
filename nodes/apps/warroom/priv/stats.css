@@ -1,0 +1,68 @@
+body {
+  font-family: 'Myriad Pro', Helvetica, sans-serif;
+  margin: 0;
+}
+
+.metric {
+    padding: 20px;
+}
+
+#users, #temp-users, #designs {
+    
+}
+
+.metric .history span {
+    padding-right: 10px;
+}
+
+.metric .history span:first-child {
+    font-size: 2em;
+}
+
+.graph {
+    font: 10px sans-serif;
+}
+
+.title {
+    font-size: 1.5em;
+    font-weight: normal;
+}
+
+.current-value {
+    font-size: 6em;
+    padding: 10px;
+    vertical-align: top;
+}
+
+
+path.line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+}
+
+path.area {
+  fill: #66cc66;
+  fill-opacity: 0.5;
+}
+
+.axis {
+  shape-rendering: crispEdges;
+}
+
+.y.axis line, .x.axis line {
+  stroke: #eef;
+}
+
+/*.x.axis .minor {
+  stroke-opacity: .5;
+}
+
+.x.axis path {
+  display: none;
+}*/
+
+.axis line, .axis path {
+  fill: none;
+  stroke: #000;
+}
