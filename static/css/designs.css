@@ -122,6 +122,7 @@ input.field {
     text-decoration: none;
     vertical-align: middle;
     text-align: center;
+    cursor: pointer;
 }
 .button:hover {
     border-top-color: #fafafa;
@@ -209,6 +210,20 @@ input.field {
 
 .empty, .empty:hover {
     color: #333333;
+}
+
+.or-row {
+    padding-top: 20px;
+    padding-bottom: 10px
+}
+
+.or {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.warning {
+    color: orange;
 }
 	
 #spinner {

@@ -26,6 +26,6 @@
                  ]},
   {mod, { worker_master_app, []}},
   {env, [
-         {metrics_module, folsom_metrics}
+         {metrics_module, warroom}
         ]}
  ]}.

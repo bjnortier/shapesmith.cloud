@@ -20,7 +20,7 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 <span class="logo"><a href="/"><img src="/static/images/logo_small.png"/></a></span>
+         <span class="logo"><a href="/"><img src="/static/images/logo_small.png"/></a></span>
        </div>
       <div class="fourcol last"></div>
      </div>
@@ -30,8 +30,8 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 Create an account in one easy step. Already have an account?
-	 <a href="/signin">Sign in here</a>.
+         Create an account in one easy step. Already have an account?
+         <a href="/signin">Sign in here</a>.
        </div>
        <div class="fourcol last"></div>
      </div>
@@ -43,22 +43,29 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 <div class="field">
-	   <div class="field-inner">
-	     <input placeholder="{{placeholder}}" class="field" id="{{name}}" type="{{type}}"/>
-	     <div class="errors" id="{{name}}-errors">
-	     </div>
-	   </div>
-	 </div>
+         <div class="field">
+           <div class="field-inner">
+             <input placeholder="{{placeholder}}" class="field" id="{{name}}" type="{{type}}"/>
+             <div class="errors" id="{{name}}-errors">
+             </div>
+           </div>
+         </div>
        </div>
        <div class="fourcol last"></div>
      </div>
     {{/fields}}
+
+    <div class="row or-row">
+      <div class="fourcol"></div>
+       <div class="fourcol">This is a beta! <span class="warning">There are no guarantees.</span> Your email address and the designs you create will not be shared with anyone.
+       </div>
+      <div class="fourcol"></div>
+    </div>
    
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 <div id="signup-button" class="button">create my account</div>
+         <div id="signup-button" class="button">Create my account</div>
        </div>
        <div class="fourcol last">
       </div>
@@ -67,7 +74,7 @@
      <div class="row">
        <div class="fourcol"></div>
        <div class="fourcol">
-	 <div id="spinner-container"></div>
+         <div id="spinner-container"></div>
        </div>
        <div class="fourcol last">
       </div>

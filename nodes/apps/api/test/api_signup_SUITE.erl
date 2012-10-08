@@ -28,7 +28,8 @@ all() ->
          validate_username,
 	 validate_email,
 	 validate_password,
-	 signup_signin_signout
+	 signup_signin_signout,
+         temp_account
 	].
 
 init_per_suite(Config) ->
@@ -183,6 +184,30 @@ signup_signin_signout(_Config) ->
 
     ok.
 
+temp_account(_Config) ->
+    %% Create a temporary account
+    {ok,{{"HTTP/1.1",200,_}, ResponseHeaders, PostResponse}} = 
+        httpc:request(post, {"http://localhost.shapesmith.net:8001/temp_user", [], "application/json", <<"{}">>}, [{autoredirect, false}], []),
+    check_json_content_type(ResponseHeaders),
+    {[{<<"username">>, Username}]} = jiffy:decode(iolist_to_binary(PostResponse)),
+
+    {_, SetCookie} = lists:keyfind("set-cookie", 1, ResponseHeaders),
+    [_SessionCookie, "Domain=.shapesmith.net"," Path=/"] = string:tokens(SetCookie, ";"),
+
+    %% I don't know why we need this. Without it the socket gets closed
+    timer:sleep(500),
+    
+    %% Sign in with temp user
+    httpc:reset_cookies(),
+    SigninTempUserBody = jiffy:encode({[{<<"username">>, Username},
+                                        {<<"password">>, <<"123">>}
+                                       ]}),
+    {ok,{{"HTTP/1.1",403,_}, _, SigninTempUserResponse}} = 
+        httpc:request(post, {"http://localhost.shapesmith.net:8001/signin", [], "application/json", SigninTempUserBody}, [], []),
+    {[{<<"password">>, <<"username/password combination is invalid">>}]} =
+        jiffy:decode(iolist_to_binary(SigninTempUserResponse)),
+
+    ok.
 
 
 check_json_content_type(Headers) ->
