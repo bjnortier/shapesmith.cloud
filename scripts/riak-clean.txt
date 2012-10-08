@@ -1,0 +1,7 @@
+application:start(inets).
+{ok, {_, _, Response}} = httpc:request(get, {"http://localhost:8098/buckets/_brep/keys?keys=true", []}, [], []).
+code:add_path("/home/ubuntu/shapesmith/nodes/deps/jiffy/ebin").
+{Props} = jiffy:decode(list_to_binary(Response)).
+{_, Keys} = lists:keyfind(<<"keys">>, 1,Props).
+F = fun(KeyBin) -> Key = binary_to_list(KeyBin), httpc:request(delete, {"http://localhost:8098/buckets/_brep/keys/" ++ Key, []}, [], []) end.
+lists:map(F, Keys).
