@@ -2,7 +2,8 @@ var express = require('express');
     fs = require('fs'),
     path = require('path'),
     nconf = require('nconf'),
-    app = express();
+    app = express(),
+    ueberDB = require("ueberDB");
 
 var requirejs = require('requirejs');
 var rootDir = path.normalize(path.join(__dirname, '../..'));
@@ -65,6 +66,17 @@ app.get('/', function(req, res) {
   res.redirect('/_ui/local/designs');
 });
 
+var db = new ueberDB.database("sqlite");
+db.init(function(err) {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
+
+  new requirejs('api/userapi')(app, db);
+});
+
+
 // Designs UI
 app.get(/^\/_ui\/([\w%]+)\/designs\/?$/, function(req, res) {
   var user = decodeURI(req.params[0]);
@@ -82,6 +94,7 @@ app.get(/^\/_api\/([\w%]+)\/designs\/?$/, function(req, res) {
     }
   });
 });
+
 
 // Create design
 // TODO: Name doesn't exist

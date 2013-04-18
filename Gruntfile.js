@@ -17,10 +17,15 @@ module.exports = function(grunt) {
       unit: { 
         src: 'test/unit.js',
       },
-      functional: { 
+      api: { 
         src: [
-            'test/functional/points.test.js',
-            'test/functional/polylines.test.js',
+            'test/functional/api/*.test.js',
+        ],
+      },
+      ui: { 
+        src: [
+            'test/functional/ui/points.test.js',
+            'test/functional/ui/polylines.test.js',
         ],
       },
     },
@@ -40,12 +45,12 @@ module.exports = function(grunt) {
           ]
         }
       }
-    },
+    },  
 
     express: {
         server: {
           options: {
-            port: 8001,
+            port: 9000,
             server: path.resolve('./src/api/server.js')
           }
         }
@@ -58,20 +63,32 @@ module.exports = function(grunt) {
       build: {
         src: ['build/bin/start', 'build/node_modules/supervisor/lib/cli-wrapper.js']
       }
-    }
+    },
+
+    watch: {
+      api: {
+        files: ['src/api/**/*.js', 'test/functional/api/**/*.js'],
+        tasks: ['api']
+      }
+    },
+
   });
 
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-express');
   grunt.loadNpmTasks('grunt-chmod');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Unit testing
   grunt.registerTask('unit', ['simplemocha:unit']);
   
-  // Functional testing - requires a running server
+  // Functional testing - requires a running server 
   process.env['app_env'] = 'functional';
-  grunt.registerTask('functional', ['express', 'simplemocha:functional']);
+
+  grunt.registerTask('api', ['express', 'simplemocha:api']);
+  grunt.registerTask('ui', ['express', 'simplemocha:ui']);
+  grunt.registerTask('functional', ['express', 'simplemocha:api', 'simplemocha:ui']);
 
   // Build the single JS file
   grunt.registerTask('build', ['requirejs', 'chmod:build'])

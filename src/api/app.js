@@ -1,3 +1,8 @@
+// The main server module.
+// The logic ins split into a separate 'server'
+// module so that the server can be started independantly for
+// functional testing
+
 var server = require('./server'),
     nconf = require('nconf');
    
