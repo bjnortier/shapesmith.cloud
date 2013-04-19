@@ -51,10 +51,6 @@ define(
       });
     });
 
-    // db.set("valueA", {a:1,b:2});
-
-    //get the object
-    
 
   }
 

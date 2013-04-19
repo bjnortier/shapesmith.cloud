@@ -8,34 +8,35 @@ describe('Users', function() {
   var client;
 
   beforeEach(function() {
-    client = new apidriverjs.Future('localhost', 9000);
+    client = new apidriverjs.Client('localhost', 9000);
   });
 
   it('can be created', function(done) {
 
     client
-        .create()
         .get('/user/foo')
         .assertCode(404)
         // Missing username
         .post('/user', {})
-        .assertCode(404)
-        .assertBody({errors: [{missing:'username'}]})
+          .assertCode(404)
+          .assertBody({errors: [{missing:'username'}]})
         // Invalid username
         .post('/user', {username: '_'})
-        .assertCode(404)
-        .assertBody({errors: [{invalid:'username'}]})
+          .assertCode(404)
+          .assertBody({errors: [{invalid:'username'}]})
         // Valid user
         .post('/user', {username: "foo"})
-        .assertCode(201)
-        .assertBody('created')
+          .assertCode(201)
+          .assertBody('created')
+        // user now exists
         .get('/user/foo')
-        .assertCode(200)
-        .assertBody({})
+          .assertCode(200)
+          .assertBody({})
         // Duplcate
         .post('/user', {username: "foo"})
-        .assertCode(409)
-        .assertBody('user already exists', done)
+          .assertCode(409)
+          .assertBody('user already exists')
+        .finish(done)
 
   });
 
