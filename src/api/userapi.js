@@ -18,7 +18,7 @@ define(
         return
       }
 
-      var key = 'user/' + req.body.username;
+      var key = 'user/' + username;
       db.get(key, function(err, value) {
         if (err) {
           res.send(500);
@@ -29,6 +29,7 @@ define(
             if (err) {
               res.send(500);
             } else {
+              req .session.username = username;
               res.json(201, 'created');
             }
           })
@@ -38,9 +39,13 @@ define(
     });
 
     app.get(/^\/user\/([\w%]+)\/?$/, function(req, res) {
-      var user = decodeURI(req.params[0])
+      var username = decodeURI(req.params[0])
+      if (req.session.username !== username) {
+        res.json(401, 'Unauthorized');
+        return
+      }
 
-      db.get('user/' + user, function(err, value) {
+      db.get('user/' + username, function(err, value) {
         if (err) {
           res.send(500);
         } else if (value === null) {

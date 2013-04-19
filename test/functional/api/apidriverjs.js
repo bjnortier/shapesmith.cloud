@@ -1,11 +1,10 @@
-var http = require('http');
+var request = require('request');
     chai = require('chai'),
     assert = chai.assert;
 chai.Assertion.includeStack = true;
 
-var Client = function(host, port, prev) {
-  this.host = host;
-  this.port = port;
+var Client = function(baseUrl, prev) {
+  this.baseUrl = baseUrl; 
   this.prev = prev;
 }
 
@@ -33,7 +32,7 @@ Client.addCommand = function(name, fn) {
         that.next.do(state1);
       });
     }
-    this.next = new Client(this.host, this.port, this);
+    this.next = new Client(this.baseUrl, this);
     return this.next;
   }
 }
@@ -51,19 +50,13 @@ Client.addCommand('get', function(path) {
 
   return function(state0, callback) {
 
-    http.get({
-      host: this.host,
-      port: this.port || 80, 
-      path: path
-    }, function(res) {
+    request.get(this.baseUrl + path, function(err, res, body) {
 
-      res.on('data', function (chunk) {
-        var state1 = {
-          statusCode: res.statusCode,
-          body: JSON.parse(chunk.toString()),
-        }
-        callback(state1);
-      });
+      var state1 = {
+        statusCode: res.statusCode,
+        body: JSON.parse(body),
+      }
+      callback(state1);
 
     });
   }
@@ -73,24 +66,17 @@ Client.addCommand('post', function(path, data) {
 
   return function(state0, callback) {
 
-    var req = http.request({
-      method: 'POST',
-      host: this.host,
-      port: this.port || 80, 
-      path: path,
-      headers: {'content-type':'application/json'}
-    }, function(res) {
-
-      res.on('data', function (chunk) {
-        var state1 = {
-          statusCode: res.statusCode,
-          body: JSON.parse(chunk.toString()),
-        }
-        callback(state1);
-      });
+    request.post({
+      url: this.baseUrl + path,
+      headers: {'content-type':'application/json'},
+      body: JSON.stringify(data),
+    }, function(err, res, body) {
+      var state1 = {
+        statusCode: res.statusCode,
+        body: JSON.parse(body)
+      }
+      callback(state1);
     })
-    req.write(JSON.stringify(data))
-    req.end();
 
   }
 });

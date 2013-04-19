@@ -44,6 +44,10 @@ console.info('disk db path:', diskDBPath);
 var DB = requirejs('api/disk_db');
 var db = new DB({root: diskDBPath});
 
+app.use(express.bodyParser());
+app.use(express.cookieParser());
+app.use(express.session({ secret: 'f8a5125a15a5241cb814649c4d7c16af', key: 'sid', cookie: { maxAge: 60000 }}))
+
 app.set('view engine', 'hbs');
 app.set('views', path.join(rootDir, 'templates'));
 
@@ -55,15 +59,29 @@ app.use('/node_modules', express.static(path.join(rootDir, 'node_modules')));
 app.use('/lib', express.static(path.join(rootDir, 'src/lib')));
 
 // app.use(express.logger());
+// app.use(express.cookieSession({ secret: 'tobo!', cookie: { maxAge: 60 * 60 * 1000 }}));
 
-app.use(express.bodyParser());
 app.use(function(err, req, res, next){
   console.error(err.stack);
   res.send(500, 'Oops. An error occurred.');
 });
 
 app.get('/', function(req, res) {
-  res.redirect('/_ui/local/designs');
+  console.log(req.session)
+
+  var sess = req.session;
+  if (sess.views) {
+    res.setHeader('Content-Type', 'text/html');
+    res.write('<p>views: ' + sess.views + '</p>');
+    res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's</p>');
+    res.end();
+    sess.views++;
+  } else {
+    sess.views = 1;
+    res.end('welcome to the session demo. refresh!');
+  }
+
+  // res.redirect('/_ui/local/designs');
 });
 
 var db = new ueberDB.database("sqlite");
