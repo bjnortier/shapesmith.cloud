@@ -9,26 +9,26 @@ define([
       edges: [],
       metadata: [],
     }
-    create(db, username, emptyGraph, callback);
+    create(db, username, 'graph', emptyGraph, callback);
 
   }
 
-  var create = function(db, username, object, callback) {
+  var create = function(db, username, type, object, callback) {
     var sha = GraphAPI.hashObject(object);
-    var key = createKey(username, sha);
+    var key = createKey(username, type, sha);
     db.set(key, object, function(err) {
       callback(err, sha);
     })
 
   }
 
-  var get = function(db, username, sha, callback) {
-    var key = createKey(username, sha);
+  var get = function(db, username, type, sha, callback) {
+    var key = createKey(username, type, sha);
     db.get(key, callback);
   }
 
-  var createKey = function(username, sha) {
-    return username + '/object/' + sha;
+  var createKey = function(username, type, sha) {
+    return username + '/' + type + '/' + sha;
   }
 
   return {

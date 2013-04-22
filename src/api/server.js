@@ -92,7 +92,6 @@ app.get(/^\/_ui\/([\w%]+)\/designs\/?$/, function(req, res) {
   res.render('designs', {user: user});
 });
 
-
 // Modeller UI
 app.get(/^\/_ui\/([\w%]+)\/([\w%]+)\/modeller$/, function(req, res) {
   var user = decodeURI(req.params[0]);
@@ -100,38 +99,6 @@ app.get(/^\/_ui\/([\w%]+)\/([\w%]+)\/modeller$/, function(req, res) {
   res.render('modeller', {user: user, design: design});
 });
 
-
-// // Create vertex
-// app.post(/^\/_api\/([\w%]+)\/([\w%]+)\/vertex\/?$/, function(req, res) {
-//   var user = decodeURI(req.params[0]);
-//   var design = decodeURI(req.params[1]);
-//   var vertex = req.body;
-//   db.createVertex(user, design, vertex, function(err, sha) {
-//     if (err) {
-//       res.send(500, err);
-//     } else {
-//       res.json(sha);
-//     }
-//   });
-// });
-
-// // Get vertex
-// app.get(/^\/_api\/([\w%]+)\/([\w%]+)\/vertex\/([\w%]+)\/?$/, function(req, res) {
-//   var user = decodeURI(req.params[0]);
-//   var design = decodeURI(req.params[1]);
-//   var sha = req.params[2];
-//   db.getVertex(user, design, sha, function(err, data) {
-//     if (err) {
-//       if (err === 'notFound') {
-//         res.send(404, 'not found');
-//       } else {
-//         res.send(500, err);
-//       }
-//     } else {
-//       return res.json(data);
-//     }
-//   });
-// });
 
 // For controlling the process (e.g. via Erlang) - stop the server
 // when stdin is closed

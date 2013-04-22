@@ -6,23 +6,44 @@ define([
   var ObjectAPI = function(app, db) {
 
     // Create graph
-    app.post(/^\/api\/([\w%]+)\/(graph|vertex)\/?$/, function(req, res) {
+    app.post(/^\/api\/([\w%]+)\/graph\/?$/, function(req, res) {
       var username = decodeURI(req.params[0]);
-      var graph = req.body;
-      Objects.create(db, username, graph, function(err, sha) {
+      create(username, 'graph', req.body, res);
+    });
+
+    // Get graph
+    app.get(/^\/api\/([\w%]+)\/graph\/([\w%]+)\/?$/, function(req, res) {
+      var username = decodeURI(req.params[0]);
+      var sha = req.params[1];
+      get(username, 'graph', sha, res);
+    });
+
+    // Create vertex
+    app.post(/^\/api\/([\w%]+)\/vertex\/?$/, function(req, res) {
+      var username = decodeURI(req.params[0]);
+      create(username, 'vertex', req.body, res);
+    });
+
+    // Get vertex
+    app.get(/^\/api\/([\w%]+)\/vertex\/([\w%]+)\/?$/, function(req, res) {
+      var username = decodeURI(req.params[0]);
+      var sha = req.params[1];
+      get(username, 'vertex', sha, res);
+    });
+
+
+    var create = function(username, type, object, res) {
+      Objects.create(db, username, type, object, function(err, sha) {
         if (err) {
           res.json(500, err);
         } else {
           res.json(201, sha);
         }
       });
-    });
+    }
 
-    // Get graph
-    app.get(/^\/api\/([\w%]+)\/(graph|vertex)\/([\w%]+)\/?$/, function(req, res) {
-      var username = decodeURI(req.params[0]);
-      var sha = req.params[2];
-      Objects.get(db, username, sha, function(err, object) {
+    var get = function(username, type, sha, res) {
+      Objects.get(db, username, type, sha, function(err, object) {
         if (err) {
           res.send(500, err);
         } else if (object === null) {
@@ -30,9 +51,8 @@ define([
         } else {
           return res.json(object);
         }
-      
       });
-    });
+    }
 
   }
 
