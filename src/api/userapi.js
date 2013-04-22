@@ -1,7 +1,8 @@
 define(
   [
+    './users'
   ], 
-  function() {
+  function(Users) {
 
   var UserAPI = function(app, db) {
 
@@ -13,23 +14,22 @@ define(
         return
       }
 
-      if (!/[a-zA-Z][a-zA-Z0-9_]*/.exec(username)) {
+      if (!Users.validate(username)) {
         res.json(404, {errors: [{invalid: 'username'}]});
         return
       }
 
-      var key = 'user/' + username;
-      db.get(key, function(err, value) {
+      Users.get(db, username, function(err, userData) {
         if (err) {
-          res.send(500);
-        } else if (value !== null) {
+          res.json(500, err);
+        } else if (userData !== null) {
           res.json(409, 'user already exists');
         } else {
-          db.set(key, {}, function(err, value) {
+          Users.create(db, username, function(err) {
             if (err) {
-              res.send(500);
+              res.send(500, err);
             } else {
-              req .session.username = username;
+              req.session.username = username;
               res.json(201, 'created');
             }
           })
@@ -40,22 +40,22 @@ define(
 
     app.get(/^\/user\/([\w%]+)\/?$/, function(req, res) {
       var username = decodeURI(req.params[0])
-      if (req.session.username !== username) {
+      if (!app.get('auth_engine')(username, req)) {
         res.json(401, 'Unauthorized');
         return
       }
 
-      db.get('user/' + username, function(err, value) {
+      Users.get(db, username, function(err, userData) {
         if (err) {
-          res.send(500);
-        } else if (value === null) {
+          res.json(500);
+        } else if (userData === null) {
           res.json(404, 'not found');
         } else {
-          res.json(value);
+          res.json(userData);
         }
+        
       });
     });
-
 
   }
 

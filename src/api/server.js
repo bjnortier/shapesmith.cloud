@@ -58,6 +58,10 @@ app.use('/ui/node_modules', express.static(path.join(rootDir, 'node_modules')));
 app.use('/node_modules', express.static(path.join(rootDir, 'node_modules')));
 app.use('/lib', express.static(path.join(rootDir, 'src/lib')));
 
+app.set('auth_engine', function(username, req) {
+  return (req.session.username === username);
+})
+
 // app.use(express.logger());
 // app.use(express.cookieSession({ secret: 'tobo!', cookie: { maxAge: 60 * 60 * 1000 }}));
 

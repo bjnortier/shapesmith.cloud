@@ -51,7 +51,6 @@ Client.addCommand('get', function(path) {
   return function(state0, callback) {
 
     request.get(this.baseUrl + path, function(err, res, body) {
-
       var state1 = {
         statusCode: res.statusCode,
         body: JSON.parse(body),
