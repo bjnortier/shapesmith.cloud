@@ -7,16 +7,8 @@ define([
   }
 
   var get = function(db, username, callback) {
-
     var key = keyFromUsername(username);
-    db.get(key, function(err, value) {
-      if (err) {
-        callback(err);
-      } else {
-        callback(undefined, value);
-      }
-    });
-
+    db.get(key, callback);
   }
 
   var create = function(db, username, callback) {

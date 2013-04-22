@@ -59,7 +59,7 @@ describe('Designs', function() {
 
   });
 
-  it.only('can be deleted', function(done) {
+  it('can be deleted', function(done) {
      client
       .delete('/api/bob/design/aaa')
         .assertCode(404)

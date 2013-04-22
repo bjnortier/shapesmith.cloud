@@ -1,23 +1,15 @@
 define([
-    './graphs'
+    './objects'
   ],
-  function(Graphs) {
+  function(Objects) {
 
   var validate = function(name) {
     return !!/^[a-zA-Z_][a-zA-Z0-9-_\s]*$/.exec(name);
   }
 
   var get = function(db, username, design, callback) {
-
     var key = createDesignKey(username, design);
-    db.get(key, function(err, value) {
-      if (err) {
-        callback(err);
-      } else {
-        callback(undefined, value);
-      }
-    });
-
+    db.get(key, callback);
   }
 
   var del = function(db, username, design, callback) {
@@ -47,7 +39,7 @@ define([
 
     var designKey = createDesignKey(username, design);
 
-    Graphs.create(db, username, design, function(err, sha) {
+    Objects.createNewGraph(db, username, function(err, sha) {
       if (err) {
         callback(err);
         return;

@@ -82,6 +82,7 @@ db.init(function(err) {
 
   new requirejs('api/userapi')(app, db);
   new requirejs('api/designapi')(app, db);
+  new requirejs('api/objectapi')(app, db);
 });
 
 
@@ -89,49 +90,6 @@ db.init(function(err) {
 app.get(/^\/_ui\/([\w%]+)\/designs\/?$/, function(req, res) {
   var user = decodeURI(req.params[0]);
   res.render('designs', {user: user});
-});
-
-// Rename design.
-// NB! This is not safe if multiple requests change
-// the list of designs at the same time!
-app.post(/^\/_api\/([\w%]+)\/([\w%]+)\/?$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-  if (!req.body.newName) {
-    res.json(400, 'no newName parameter');
-  } else if (!/^[a-zA-Z_][a-zA-Z0-9-_\\s]*$/.test(req.body.newName)) {
-    res.json(400, 'invalid new name');
-  } else {
-    var newName = req.body.newName;
-    db.renameDesign(user, design, newName, function(err, data) {
-      if (err) {
-        if (err === 'alreadyExists') {
-          res.send(409, 'already exists');
-        } else {
-          res.send(500, err);
-        }
-      } else {
-        res.json(data);
-      }
-    });
-  }
-});
-
-// Delete design
-app.delete(/^\/_api\/([\w%]+)\/([\w%]+)\/?$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-  db.deleteDesign(user, design, function(err, data) {
-    if (err) {
-      if (err === 'notFound') {
-        res.send(404, 'not found');
-      } else {
-        res.send(500, err);
-      }
-    } else {
-      res.json(data);
-    }
-  });
 });
 
 
@@ -143,65 +101,37 @@ app.get(/^\/_ui\/([\w%]+)\/([\w%]+)\/modeller$/, function(req, res) {
 });
 
 
-// Create graph
-app.post(/^\/_api\/([\w%]+)\/([\w%]+)\/graph\/?$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-  var graph = req.body;
-  db.createGraph(user, design, graph, function(err, sha) {
-    if (err) {
-      res.send(500, err);
-    } else {
-      res.json(sha);
-    }
-  });
-});
+// // Create vertex
+// app.post(/^\/_api\/([\w%]+)\/([\w%]+)\/vertex\/?$/, function(req, res) {
+//   var user = decodeURI(req.params[0]);
+//   var design = decodeURI(req.params[1]);
+//   var vertex = req.body;
+//   db.createVertex(user, design, vertex, function(err, sha) {
+//     if (err) {
+//       res.send(500, err);
+//     } else {
+//       res.json(sha);
+//     }
+//   });
+// });
 
-// Get graph
-app.get(/^\/_api\/([\w%]+)\/([\w%]+)\/graph\/([\w%]+)\/?$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-  var sha = req.params[2];
-  db.getGraph(user, design, sha, function(err, data) {
-    if (err) {
-      res.send(500, err);
-    } else {
-      return res.json(data);
-    }
-  });
-});
-
-// Create vertex
-app.post(/^\/_api\/([\w%]+)\/([\w%]+)\/vertex\/?$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-  var vertex = req.body;
-  db.createVertex(user, design, vertex, function(err, sha) {
-    if (err) {
-      res.send(500, err);
-    } else {
-      res.json(sha);
-    }
-  });
-});
-
-// Get vertex
-app.get(/^\/_api\/([\w%]+)\/([\w%]+)\/vertex\/([\w%]+)\/?$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-  var sha = req.params[2];
-  db.getVertex(user, design, sha, function(err, data) {
-    if (err) {
-      if (err === 'notFound') {
-        res.send(404, 'not found');
-      } else {
-        res.send(500, err);
-      }
-    } else {
-      return res.json(data);
-    }
-  });
-});
+// // Get vertex
+// app.get(/^\/_api\/([\w%]+)\/([\w%]+)\/vertex\/([\w%]+)\/?$/, function(req, res) {
+//   var user = decodeURI(req.params[0]);
+//   var design = decodeURI(req.params[1]);
+//   var sha = req.params[2];
+//   db.getVertex(user, design, sha, function(err, data) {
+//     if (err) {
+//       if (err === 'notFound') {
+//         res.send(404, 'not found');
+//       } else {
+//         res.send(500, err);
+//       }
+//     } else {
+//       return res.json(data);
+//     }
+//   });
+// });
 
 // For controlling the process (e.g. via Erlang) - stop the server
 // when stdin is closed
