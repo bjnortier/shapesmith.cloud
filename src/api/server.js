@@ -44,9 +44,9 @@ console.info('disk db path:', diskDBPath);
 var DB = requirejs('api/disk_db');
 var db = new DB({root: diskDBPath});
 
-app.use(express.bodyParser());
+app.use(express.bodyParser({strict: false}));
 app.use(express.cookieParser());
-app.use(express.session({ secret: 'f8a5125a15a5241cb814649c4d7c16af', key: 'sid', cookie: { maxAge: 60000 }}))
+app.use(express.session({secret: 'f8a5125a15a5241cb814649c4d7c16af', key: 'sid', cookie: { maxAge: 60000 }}));
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(rootDir, 'templates'));
@@ -63,7 +63,6 @@ app.set('auth_engine', function(username, req) {
 })
 
 // app.use(express.logger());
-// app.use(express.cookieSession({ secret: 'tobo!', cookie: { maxAge: 60 * 60 * 1000 }}));
 
 app.use(function(err, req, res, next){
   console.error(err.stack);
@@ -71,21 +70,7 @@ app.use(function(err, req, res, next){
 });
 
 app.get('/', function(req, res) {
-  console.log(req.session)
-
-  var sess = req.session;
-  if (sess.views) {
-    res.setHeader('Content-Type', 'text/html');
-    res.write('<p>views: ' + sess.views + '</p>');
-    res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's</p>');
-    res.end();
-    sess.views++;
-  } else {
-    sess.views = 1;
-    res.end('welcome to the session demo. refresh!');
-  }
-
-  // res.redirect('/_ui/local/designs');
+  res.redirect('/_ui/local/designs');
 });
 
 var db = new ueberDB.database("sqlite");
@@ -96,6 +81,7 @@ db.init(function(err) {
   }
 
   new requirejs('api/userapi')(app, db);
+  new requirejs('api/designapi')(app, db);
 });
 
 
@@ -103,78 +89,6 @@ db.init(function(err) {
 app.get(/^\/_ui\/([\w%]+)\/designs\/?$/, function(req, res) {
   var user = decodeURI(req.params[0]);
   res.render('designs', {user: user});
-});
-
-// Designs API
-app.get(/^\/_api\/([\w%]+)\/designs\/?$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  db.getDesigns(user, function(err, data) {
-    if (err) {
-      res.send(500, err);
-    } else {
-      return res.json(data);
-    }
-  });
-});
-
-
-// Create design
-// TODO: Name doesn't exist
-// TODO: Name is valid
-app.put(/^\/_api\/([\w%]+)\/([\w%]+)\/?$/, function(req, res) {
-
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-
-  // 1. Create the path for the designs
-  // 2. Create the empty graph
-  // 3. Create the refs
-  // 4. Add the design to the list of designs
-
-  db.createDesignPath(user, design, function(err) {
-    if (err) {
-      if (err === 'already_exists') {
-        res.send(409, 'already exists');
-      } else {
-        res.send(500, err);
-      }
-    } else {
-
-      var emptyGraph = {
-        vertices: [],
-        edges: [],
-        metadata: [],
-      }
-
-      db.createGraph(user, design, emptyGraph, function(err, sha) {
-        if (err) {
-          res.send(500, err);
-        } else {
-
-          var refs = {
-            'heads' : {
-              'master': sha
-            }
-          }
-
-          db.createRefs(user, design, refs, function(err) {
-            if (err) {
-              res.send(500, err)
-            } else {
-
-              db.addDesign(user, design, function(err) {
-                if (err) {
-                  res.send(500, err);
-                } else {
-                  res.json(refs);
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-  });
 });
 
 // Rename design.
@@ -220,34 +134,6 @@ app.delete(/^\/_api\/([\w%]+)\/([\w%]+)\/?$/, function(req, res) {
   });
 });
 
-// Get Refs
-app.get(/^\/_api\/([\w%]+)\/([\w%]+)\/refs$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-  db.getRefs(user, design, function(err, data) {
-    if (err) {
-      res.send(500, err)
-    } else {
-      res.json(data);
-    }
-  });
-});
-
-// Update ref
-app.put(/^\/_api\/([\w%]+)\/([\w%]+)\/refs\/(\w+)\/(\w+)\/?$/, function(req, res) {
-  var user = decodeURI(req.params[0]);
-  var design = decodeURI(req.params[1]);
-  var type = req.params[2];
-  var ref = req.params[3];
-  db.updateRefs(user, design, type, ref, req.body, function(err, data) {
-    if (err) {
-      res.send(500, err)
-    } else {
-      res.json(data);
-    }
-  });
-
-});
 
 // Modeller UI
 app.get(/^\/_ui\/([\w%]+)\/([\w%]+)\/modeller$/, function(req, res) {
@@ -323,10 +209,5 @@ process.stdin.resume();
 process.stdin.on('end', function() {
   process.exit();
 });
-
-// var port = nconf.get('port');
-// app.listen(port);
-// console.info('--------------');
-// console.info('server started on :' + port + '\n');
 
 module.exports = app;

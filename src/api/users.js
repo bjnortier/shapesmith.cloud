@@ -29,11 +29,11 @@ define([
         callback();
       }
     })
-    
+
   }
 
   var keyFromUsername = function(username) {
-    return 'user/' + username;
+    return '_user/' + username;
   }
 
   return {

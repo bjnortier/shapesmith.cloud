@@ -9,6 +9,7 @@ define(
     // Create a new user
     app.post(/^\/user\/?$/, function(req, res) {
       var username = req.body.username && req.body.username.trim();
+      
       if (username === undefined) {
         res.json(404, {errors: [{missing: 'username'}]});
         return
@@ -39,6 +40,7 @@ define(
     });
 
     app.get(/^\/user\/([\w%]+)\/?$/, function(req, res) {
+      
       var username = decodeURI(req.params[0])
       if (!app.get('auth_engine')(username, req)) {
         res.json(401, 'Unauthorized');
@@ -53,8 +55,8 @@ define(
         } else {
           res.json(userData);
         }
-        
       });
+
     });
 
   }

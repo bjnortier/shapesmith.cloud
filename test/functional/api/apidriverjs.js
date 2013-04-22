@@ -23,6 +23,14 @@ Client.prototype.finish = function(callback) {
   sequence[0].do(0, sequence[1]);
 }
 
+Client.safeParse = function(body) {
+  try {
+    return JSON.parse(body);
+  } catch (e) {
+    return {body: body};
+  }
+}
+
 Client.addCommand = function(name, fn) {
   Client.prototype[name] = function() {
     var that = this;
@@ -53,7 +61,7 @@ Client.addCommand('get', function(path) {
     request.get(this.baseUrl + path, function(err, res, body) {
       var state1 = {
         statusCode: res.statusCode,
-        body: JSON.parse(body),
+        body: Client.safeParse(body),
       }
       callback(state1);
 
@@ -72,7 +80,26 @@ Client.addCommand('post', function(path, data) {
     }, function(err, res, body) {
       var state1 = {
         statusCode: res.statusCode,
-        body: JSON.parse(body)
+        body: Client.safeParse(body),
+      }
+      callback(state1);
+    })
+
+  }
+});
+
+Client.addCommand('put', function(path, data) {
+
+  return function(state0, callback) {
+
+    request.put({
+      url: this.baseUrl + path,
+      headers: {'content-type':'application/json'},
+      body: JSON.stringify(data),
+    }, function(err, res, body) {
+      var state1 = {
+        statusCode: res.statusCode,
+        body: Client.safeParse(body)
       }
       callback(state1);
     })
@@ -92,7 +119,7 @@ Client.addCommand('assertCode', function(code) {
 Client.addCommand('assertBody', function(body) {
 
   return function(state, callback) {
-    assert.deepEqual(state.body, body);
+    assert.deepEqual(state.body, body, JSON.stringify(state.body));
     callback(state);
   }
 
