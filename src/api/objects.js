@@ -13,11 +13,10 @@ define([
 
   }
 
-  var create = function(db, username, graph, callback) {
-    console.log(graph)
-    var sha = GraphAPI.hashObject(graph);
+  var create = function(db, username, object, callback) {
+    var sha = GraphAPI.hashObject(object);
     var key = createKey(username, sha);
-    db.set(key, graph, function(err) {
+    db.set(key, object, function(err) {
       callback(err, sha);
     })
 
@@ -29,13 +28,13 @@ define([
   }
 
   var createKey = function(username, sha) {
-    return username + '/graph/' + sha;
+    return username + '/object/' + sha;
   }
 
   return {
     createNewGraph: createNewGraph,
-    create   : create,
-    get      : get,
+    create        : create,
+    get           : get,
   }
 
 });

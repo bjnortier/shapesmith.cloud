@@ -3,7 +3,7 @@ var chai = require('chai'),
     apidriverjs = require('./apidriverjs');
 chai.Assertion.includeStack = true;
 
-describe.only('Objects', function() {
+describe('Objects', function() {
 
   var client;
 

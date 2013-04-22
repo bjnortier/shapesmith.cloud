@@ -1,7 +1,7 @@
 define([
-    './graphs'
+    './objects'
   ],
-  function(Graphs) {
+  function(Objects) {
 
   var ObjectAPI = function(app, db) {
 
@@ -9,7 +9,7 @@ define([
     app.post(/^\/api\/([\w%]+)\/(graph|vertex)\/?$/, function(req, res) {
       var username = decodeURI(req.params[0]);
       var graph = req.body;
-      Graphs.create(db, username, graph, function(err, sha) {
+      Objects.create(db, username, graph, function(err, sha) {
         if (err) {
           res.json(500, err);
         } else {
@@ -22,7 +22,7 @@ define([
     app.get(/^\/api\/([\w%]+)\/(graph|vertex)\/([\w%]+)\/?$/, function(req, res) {
       var username = decodeURI(req.params[0]);
       var sha = req.params[2];
-      Graphs.get(db, username, sha, function(err, object) {
+      Objects.get(db, username, sha, function(err, object) {
         if (err) {
           res.send(500, err);
         } else if (object === null) {
