@@ -45,15 +45,6 @@ Client.addCommand = function(name, fn) {
   }
 }
 
-Client.addCommand('foo', function(x) {
-  return function(state, callback) {
-    setTimeout(function() {
-      console.log('foo', state);
-      callback(state + 1)
-    }, 50)
-  }
-});
-
 Client.addCommand('get', function(path) {
 
   return function(state0, callback) {
@@ -66,6 +57,22 @@ Client.addCommand('get', function(path) {
       callback(state1);
 
     });
+  }
+});
+
+Client.addCommand('delete', function(path) {
+
+  return function(state0, callback) {
+
+    request.del(this.baseUrl + path, function(err, res, body) {
+      var state1 = {
+        statusCode: res.statusCode,
+        body: Client.safeParse(body),
+      }
+      callback(state1);
+
+    });
+
   }
 });
 
