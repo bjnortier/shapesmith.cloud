@@ -1,4 +1,7 @@
 {
-    "diskDBPath": "db/",
-    "port": 8000
+    "port": 8000,
+    "dbType": "sqlite",
+    "dbArgs": {
+        "filename" : "db/sqlite3.db"
+    }
 }

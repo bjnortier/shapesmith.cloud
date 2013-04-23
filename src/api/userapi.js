@@ -8,16 +8,28 @@ define(
 
     // Create a new user
     app.post(/^\/user\/?$/, function(req, res) {
-      var username = req.body.username && req.body.username.trim();
-      
+      var username = req.body.username;
+      var password = req.body.password;
+
+      var errors = [];
       if (username === undefined) {
-        res.json(404, {errors: [{missing: 'username'}]});
-        return
+        errors.push({'username':'please provide a valid email address'});
+      }
+      if (password === undefined) {
+        errors.push({'password':'please provide a password with a minimum of 6 characters'});
       }
 
-      if (!Users.validate(username)) {
-        res.json(404, {errors: [{invalid: 'username'}]});
-        return
+      if (!Users.validateUsername(username)) {
+        errors.push({'username':'please provide a valid email address'});
+      }
+
+      if (!Users.validatePassword(password)) {
+        errors.push({'password':'must be at least 6 characters'});
+      }
+
+      if (errors.length) {
+        res.json(400, {errors: errors});
+        return;
       }
 
       Users.get(db, username, function(err, userData) {
@@ -26,7 +38,7 @@ define(
         } else if (userData !== null) {
           res.json(409, 'user already exists');
         } else {
-          Users.create(db, username, function(err) {
+          Users.create(db, username, password, function(err) {
             if (err) {
               res.send(500, err);
             } else {

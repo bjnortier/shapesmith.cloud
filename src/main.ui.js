@@ -63,8 +63,8 @@ requirejs([
 
         var statsView = new StatsView();
 
-        var vertexUrl = '/_api/' + globals.user + '/' + globals.design + '/vertex/';
-        var graphUrl = '/_api/' + globals.user + '/' + globals.design + '/graph/';
+        var vertexUrl = '/api/' + globals.user + '/vertex/';
+        var graphUrl = '/api/' + globals.user + '/graph/';
         var replicator = new AJAXReplicator(vertexUrl, graphUrl);
         geometryGraph.attachReplicator(replicator);
 

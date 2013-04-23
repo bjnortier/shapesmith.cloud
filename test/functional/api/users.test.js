@@ -18,22 +18,29 @@ describe('User', function() {
       .assertCode(401)
       // Missing username
       .post('/user', {})
-        .assertCode(404)
-        .assertBody({errors: [{missing:'username'}]})
+        .assertCode(400)
+        .assertBody({errors: [{'username':'missing'}, {'password':'missing'}]})
       // Invalid username
-      .post('/user', {username: '_'})
-        .assertCode(404)
-        .assertBody({errors: [{invalid:'username'}]})
+      .post('/user', {username: '_', password:'123456'})
+        .assertCode(400)
+        .assertBody({errors: [{'username':'invalid'}]})
+      // Invalid password
+      .post('/user', {username: 'bob', password:'123'})
+        .assertCode(400)
+        .assertBody({errors: [{'password':'must be at least 6 characters'}]})
       // Valid user
-      .post('/user', {username: "foo"})
+      .post('/user', {username: 'foo', password:'123456'})
         .assertCode(201)
         .assertBody('created')
       // user now exists
       .get('/user/foo')
         .assertCode(200)
-        .assertBody({})
+        .assertBody(function(body) {
+          assert.equal(body.username, 'foo');
+          assert.isString(body.password_bcrypt);
+        })
       // Duplcate
-      .post('/user', {username: "foo"})
+      .post('/user', {username: 'foo', password:'123456'})
         .assertCode(409)
         .assertBody('user already exists')
       .finish(done)
@@ -42,7 +49,7 @@ describe('User', function() {
 
   it('can be authenticated', function(done) {
 
-    var username = 'bob', password = '1234';
+    var username = 'bob', password = '123456';
 
     client
       // Not authorized
@@ -54,7 +61,9 @@ describe('User', function() {
       // Authorized
       .get('/user/' + username)
         .assertCode(200)
-        .assertBody({})
+        .assertBody(function(body) {
+          assert.equal(body.username, 'bob')
+        })
       .finish(done)
 
   });

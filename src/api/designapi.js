@@ -5,6 +5,22 @@ define([
 
   var DesignAPI = function(app, db) {
 
+    // Get all the user's designs
+    app.get(/^\/api\/([\w%]+)\/designs\/?$/, function(req, res) {
+
+      var username = decodeURI(req.params[0]);
+      Designs.getAll(db, username, function(err, list) {
+        if (err) {
+          res.json(500);
+        } else if (list === null) {
+          res.json(200, []);
+        } else {
+          res.json(200, list);
+        }
+      });
+
+    });
+
     // Get the design refs
     app.get(/^\/api\/([\w%]+)\/design\/([\w%]+)\/?$/, function(req, res) {
 
@@ -28,11 +44,11 @@ define([
       var design = req.body.name && req.body.name.trim();
 
       if (design === undefined) {
-        res.json(404, {errors: [{missing: 'name'}]});
+        res.json(400, {errors: [{missing: 'name'}]});
         return
       }
       if (!Designs.validate(design)) {
-        res.json(404, {errors: [{invalid: 'name'}]});
+        res.json(400, {errors: [{invalid: 'name'}]});
         return
       }
 
@@ -46,11 +62,11 @@ define([
           return;
         } 
 
-        Designs.create(db, username, design, function(err) {
+        Designs.create(db, username, design, function(err, obj) {
           if (err) {
             res.json(500, err);
           } else {
-            res.json(201, 'created');
+            res.json(201, obj);
           }
         });
 
@@ -84,18 +100,18 @@ define([
       var newSHA = req.body;
 
       if (!_.isString(newSHA)) {
-        res.json(404, {errors: ['value must be a JSON string']});
+        res.json(400, {errors: ['value must be a JSON string']});
         return;
       }
 
       if (!(newSHA.length === 40)) {
-        res.json(404, {errors: ['value must be a 160bit (40 character) SHA']});
+        res.json(400, {errors: ['value must be a 160bit (40 character) SHA']});
         return;
       }
 
       Designs.updateRef(db, username, design, type, ref, newSHA, function(err) {
         if (err === 'notFound') {
-          res.json(400, 'not found');
+          res.json(404, 'not found');
         } else if (err) {
           res.json(500, err);
         } else {
@@ -119,7 +135,7 @@ define([
 
       Designs.rename(db, username, design, newName, function(err, refs) {
         if (err === 'notFound') {
-          res.json(400, 'not found');
+          res.json(404, 'not found');
         } else if (err === 'alreadyExists') {
           res.json(409, 'already exists');
         } else if (err) {

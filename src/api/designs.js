@@ -1,10 +1,16 @@
 define([
-    './objects'
+    './users',
+    './objects',
   ],
-  function(Objects) {
+  function(Users, Objects) {
 
   var validate = function(name) {
     return !!/^[a-zA-Z_][a-zA-Z0-9-_\s]*$/.exec(name);
+  }
+
+  var getAll = function(db, username, callback) {
+    var key = createAllDesignsKey(username);
+    db.get(key, callback);
   }
 
   var get = function(db, username, design, callback) {
@@ -21,13 +27,19 @@ define([
       } else if (value === null) {
         callback('notFound');
       } else {
-       
         db.remove(key, function(err, value) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(undefined, value);
-          }
+
+          // Update all list
+          updateAllList(db, username, function(list) {
+            var index = list.indexOf(design);
+            if (index === -1) {
+              callback('notFound')
+            } else {
+              list.splice(index, 1);
+              return list;
+            }
+          }, callback);
+
         });
       }
 
@@ -50,11 +62,17 @@ define([
         }
       }
       db.set(designKey, refs, function(err) {
-        if (err) {
-          callback(err)
-        } else {
-          callback();
-        }
+
+        updateAllList(db, username, function(list) {
+          return list.concat(design);
+        }, function(err) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(undefined, refs);
+          }
+        });
+        
       })
     });
 
@@ -114,11 +132,18 @@ define([
             callback(err);
           } else {
             db.remove(fromKey, function(err) {
-              if (err) {
-                callback(err);
-              } else {
-                callback();
-              }
+
+              // Update all list
+              updateAllList(db, username, function(list) {
+                var index = list.indexOf(from);
+                if (index === -1) {
+                  callback('notFound')
+                } else {
+                  list.splice(index, 1, to);
+                  return list;
+                }
+              }, callback);
+
             });
           }
         })
@@ -131,7 +156,24 @@ define([
     return username + '/design/' + design;
   }
 
+  var createAllDesignsKey = function(username) {
+    return username + '/designs';
+  }
+
+  var updateAllList = function(db, username, updateFn, callback) {
+    var allKey = createAllDesignsKey(username);
+    db.get(allKey, function(err, list) {
+      if (err) {
+        callback(err)
+      } else {
+        var newList = updateFn(list || []);
+        db.set(allKey, newList, callback);
+      }
+    });
+  }
+
   return {
+    getAll   : getAll,
     validate : validate,
     get      : get,
     create   : create,

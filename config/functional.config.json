@@ -1,5 +1,5 @@
 {
-    "diskDBPath": "/test/db",
     "port": 9000,
-    "dbtype": "sqlite"
+    "dbType": "sqlite",
+    "dbArgs": {}
 }

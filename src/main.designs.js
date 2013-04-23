@@ -67,13 +67,13 @@ requirejs([
             if (newDesignName.length) {
                 var that = this;
                 $.ajax({
-                    type: 'put',
-                    url: '/_api/' + encodeURIComponent(globals.user)  + '/' + encodeURIComponent(newDesignName) + '/',
-                    data: '{}',
+                    type: 'post',
+                    url: '/api/' + encodeURIComponent(globals.user)  + '/design',
+                    data: JSON.stringify({name: newDesignName}),
                     dataType: 'json',
                     contentType: 'application/json',
                     success: function(response) {
-                        window.location.href = '/_ui/' + encodeURIComponent(globals.user) + 
+                        window.location.href = '/ui/' + encodeURIComponent(globals.user) + 
                             '/' + encodeURIComponent(newDesignName) + 
                             '/modeller?commit=' + response.heads.master + 
                             '&splash=true';
@@ -184,7 +184,7 @@ requirejs([
             var that = this;
             $.ajax({
                 type: 'DELETE',
-                url: '/_api/' + encodeURIComponent(globals.user)  + '/' + encodeURIComponent(this.model.name) + '/',
+                url: '/api/' + encodeURIComponent(globals.user)  + '/design/' + encodeURIComponent(this.model.name) + '/',
                 success: function(response) {
                     that.model.destroy();
                 },
@@ -224,7 +224,7 @@ requirejs([
             if (newName.length) {
                 $.ajax({
                     type: 'POST',
-                    url: '/_api/' + encodeURIComponent(globals.user)  + '/' + encodeURIComponent(this.model.name) + '/',
+                    url: '/api/' + encodeURIComponent(globals.user)  + '/design/' + encodeURIComponent(this.model.name) + '/',
                     data: JSON.stringify({newName: newName}),
                     dataType: 'json',
                     contentType: 'application/json',
@@ -240,7 +240,7 @@ requirejs([
         },
 
         open: function() {
-            window.location = '/_ui/' + encodeURIComponent(globals.user) + 
+            window.location = '/ui/' + encodeURIComponent(globals.user) + 
                               '/' + encodeURIComponent(this.model.name) + 
                               '/modeller?commit=' + this.model.commit;
         },
@@ -253,15 +253,15 @@ requirejs([
         new CreateModel();
 
         // Create models for designs
-        $.getJSON('/_api/' + encodeURIComponent(globals.user) + '/designs', function(designs) {
+        $.getJSON('/api/' + encodeURIComponent(globals.user) + '/designs', function(designs) {
             
             $('#designs .placeholder').remove();
             var designModels = {};
             designs.map(function(name) {
                 designModels[name] = new DesignModel({name: name});
 
-                var designURL = '/_api/' + encodeURIComponent(globals.user) +
-                                '/' + encodeURIComponent(name) + '/refs';
+                var designURL = '/api/' + encodeURIComponent(globals.user) +
+                                '/design/' + encodeURIComponent(name);
 
                 $.getJSON(designURL, function(data) {
 

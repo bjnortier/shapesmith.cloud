@@ -31,22 +31,25 @@ switch (app_env) {
         throw Error('invalid environment:' + env)
 }
 
-var diskDBPath = path.normalize(path.join(rootDir, nconf.get('diskDBPath')));
+var dbType = nconf.get('dbType') || 'sqlite';
+var dbArgs = nconf.get('dbArgs') || {};
+var useLogger = nconf.get('useLogger') || false;
 
 console.info('\n\nconfiguration:');
 console.info('--------------');
 console.info('environment: ', app_env);
 console.info('port:        ', nconf.get('port'));
-console.info('baseUrl:     ', baseUrl);
-console.info('disk db path:', diskDBPath);
+console.info('dbtype:      ', dbType);
+console.info('dbargs:      ', dbArgs);
+console.info('use logger:  ', useLogger);
+
 
 // ---------- Create db ----------
-var DB = requirejs('api/disk_db');
-var db = new DB({root: diskDBPath});
 
 app.use(express.bodyParser({strict: false}));
 app.use(express.cookieParser());
 app.use(express.session({secret: 'f8a5125a15a5241cb814649c4d7c16af', key: 'sid', cookie: { maxAge: 60000 }}));
+useLogger && app.use(express.logger());
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(rootDir, 'templates'));
@@ -62,18 +65,16 @@ app.set('auth_engine', function(username, req) {
   return (req.session.username === username);
 })
 
-// app.use(express.logger());
-
 app.use(function(err, req, res, next){
   console.error(err.stack);
   res.send(500, 'Oops. An error occurred.');
 });
 
 app.get('/', function(req, res) {
-  res.redirect('/_ui/local/designs');
+  res.redirect('/ui/local/designs');
 });
 
-var db = new ueberDB.database("sqlite");
+var db = new ueberDB.database(dbType, dbArgs);
 db.init(function(err) {
   if (err) {
     console.error(err);
@@ -84,16 +85,22 @@ db.init(function(err) {
   new requirejs('api/designapi')(app, db);
   new requirejs('api/objectapi')(app, db);
 });
+    
 
 
-// Designs UI
-app.get(/^\/_ui\/([\w%]+)\/designs\/?$/, function(req, res) {
+// Signup 
+app.get(/^\/ui\/signup\/?$/, function(req, res) {
+  res.render('signup');
+});
+
+// Designs 
+app.get(/^\/ui\/([\w%]+)\/designs\/?$/, function(req, res) {
   var user = decodeURI(req.params[0]);
   res.render('designs', {user: user});
 });
 
-// Modeller UI
-app.get(/^\/_ui\/([\w%]+)\/([\w%]+)\/modeller$/, function(req, res) {
+// Modeller 
+app.get(/^\/ui\/([\w%]+)\/([\w%]+)\/modeller$/, function(req, res) {
   var user = decodeURI(req.params[0]);
   var design = decodeURI(req.params[1]);
   res.render('modeller', {user: user, design: design});

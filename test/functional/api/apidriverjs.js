@@ -123,10 +123,14 @@ Client.addCommand('assertCode', function(code) {
 
 });
 
-Client.addCommand('assertBody', function(body) {
+Client.addCommand('assertBody', function(bodyOrFn) {
 
   return function(state, callback) {
-    assert.deepEqual(state.body, body, JSON.stringify(state.body));
+    if (typeof bodyOrFn === 'function') {
+        bodyOrFn(state.body);
+    } else {
+        assert.deepEqual(state.body, bodyOrFn, JSON.stringify(state.body));
+    }
     callback(state);
   }
 

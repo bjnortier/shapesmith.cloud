@@ -17,7 +17,7 @@ define([
         },
 
         click: function() {
-            window.location = '/_ui/' + globals.user + '/designs';
+            window.location = '/ui/' + globals.user + '/designs';
         },
 
     });
